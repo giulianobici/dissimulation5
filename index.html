@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000">
+<title>DISSIMULATION #5 — Giuliano Obici</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #050608;
+    --bg-soft: rgba(255, 255, 255, 0.06);
+    --surface: rgba(255, 255, 255, 0.08);
+    --surface-strong: rgba(255, 255, 255, 0.12);
+    --text: #f4f4f4;
+    --muted: #b8b8c2;
+    --accent: #6fc5ff;
+    --accent-strong: #3f7ff4;
+    --border: rgba(255, 255, 255, 0.14);
+    --radius: 28px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html, body {
+    min-height: 100%;
+    background: radial-gradient(circle at top, rgba(86, 159, 243, 0.14), transparent 35%),
+                linear-gradient(180deg, #07090d 0%, #030405 100%);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-y: auto;
+  }
+
+  /* ── PAGES ─────────────────────────────────────────────────────── */
+  .page {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px 32px;
+  }
+  .page.active { display: flex; }
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 22%),
+                linear-gradient(180deg, rgba(255,255,255,0.02), transparent 45%);
+    pointer-events: none;
+  }
+
+  /* ── TYPOGRAPHY ────────────────────────────────────────────────── */
+  .title {
+    font-size: clamp(2rem, 4vw, 3.8rem);
+    letter-spacing: 0.22em;
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1;
+    max-width: 10ch;
+  }
+  .subtitle {
+    font-size: clamp(1rem, 1.1vw, 1.25rem);
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.75;
+    max-width: 700px;
+  }
+
+  a {
+    color: #fff;
+    font-style: italic;
+    text-decoration: none;
+  }
+  a:hover,
+  a:focus-visible {
+    opacity: 0.9;
+  }
+
+  /* ── BUTTONS ───────────────────────────────────────────────────── */
+  .btn-main {
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    border: none;
+    color: #050608;
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.22em;
+    padding: 18px 42px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 18px 40px rgba(67, 131, 255, 0.25);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+  }
+  .btn-main:hover,
+  .btn-main:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 24px 48px rgba(67, 131, 255, 0.32);
+  }
+  .btn-main:active { opacity: 0.95; }
+  .btn-main:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn-sobre {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    padding: 14px 24px;
+    border-radius: 999px;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .btn-sobre:hover,
+  .btn-sobre:focus-visible {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.1);
+  }
+
+  /* ── PAGE 1: LANDING ───────────────────────────────────────────── */
+  #page-landing { justify-content: space-between; }
+  .landing-center {
+    flex: 1;
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    z-index: 1;
+  }
+  .landing-center .subtitle { max-width: 640px; }
+  .page-bottom {
+    padding-bottom: 8px;
+    z-index: 1;
+  }
+
+  /* ── PAGE 2: PREPARAR ──────────────────────────────────────────── */
+  #page-prepare { justify-content: center; }
+  .prepare-content {
+    width: 100%;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 26px 28px;
+    gap: 28px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 36px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(12px);
+  }
+  .prepare-content .title { margin-bottom: 0; }
+  .prepare-content .subtitle { margin-bottom: 0; }
+
+  .prepare-home {
+    width: 100%;
+    padding: 16px 18px;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.18s ease, transform 0.18s ease;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .prepare-home:hover,
+  .prepare-home:focus-visible { background: rgba(255,255,255,0.1); transform: translateY(-1px); }
+  .prepare-home:focus-visible { outline: 2px solid rgba(111,197,255,0.5); outline-offset: 4px; }
+
+  .prepare-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 0;
+    gap: 26px;
+  }
+
+  .instructions {
+    list-style: none;
+    counter-reset: step;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .instructions li {
+    counter-increment: step;
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    line-height: 1.6;
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .instructions li svg { flex-shrink: 0; width: 20px; height: 20px; }
+  .instructions li button { background: none; border: none; color: inherit; padding: 0; font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; }
+  .instructions li .share-row { margin-left: auto; display:flex; align-items:center; gap:12px; }
+  .instructions li::before {
+    content: counter(step) ".";
+    color: var(--accent);
+    font-weight: 700;
+    margin-right: 10px;
+    opacity: 0.95;
+  }
+
+  .share-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: center;
+    justify-items: center;
+    margin-top: 12px;
+  }
+  #qrcode {
+    width: 200px;
+    height: 200px;
+    background: #fff;
+    padding: 12px;
+    border-radius: 28px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.16);
+  }
+  .share-square {
+    width: 200px;
+    height: 200px;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 30px;
+  }
+  .share-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: var(--text);
+    width: 88px;
+    height: 88px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    border-radius: 24px;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .share-btn:hover,
+  .share-btn:focus-visible { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+  .share-btn svg { width: 44px; height: 44px; display: block; }
+
+  #play-hint {
+    font-size: 0.96rem;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    margin-top: 10px;
+    text-align: center;
+    min-height: 18px;
+    text-transform: uppercase;
+  }
+  #play-hint.ready { color: #8fdba8; }
+  #play-hint.error { color: #ff9b9b; }
+
+  /* ── PAGE 3: PLAYER ────────────────────────────────────────────── */
+  #page-player { padding: 0; background: transparent; }
+  .player {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+  }
+  #dark {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #info {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    font-size: 0.96rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  #muted-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(200, 60, 60, 0.9);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    display: none;
+    pointer-events: none;
+  }
+
+  /* ── MODAL SOBRE ───────────────────────────────────────────────── */
+  #modal-sobre {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 4, 10, 0.98);
+    z-index: 100;
+    overflow-y: auto;
+    padding: 64px 24px 40px;
+    -webkit-overflow-scrolling: touch;
+  }
+  #modal-sobre.show { display: block; }
+  .modal-close {
+    position: fixed;
+    top: 16px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 42px;
+    line-height: 1;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    z-index: 101;
+  }
+  .modal-content {
+    max-width: 720px;
+    margin: 0 auto;
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+  .modal-title {
+    font-size: 1.25rem;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 22px;
+  }
+  .modal-text p { margin-bottom: 18px; }
+  .modal-text em { font-style: italic; }
+  .modal-text strong { color: #fff; font-weight: 600; }
+  .ficha-title {
+    margin-top: 32px;
+    margin-bottom: 16px;
+    font-size: 1.05rem;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+    color: #fff;
+  }
+  .ficha {
+    list-style: none;
+    font-size: 1rem;
+    line-height: 2;
+    color: var(--muted);
+    padding-left: 0;
+  }
+
+  /* ── MOBILE ────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .page { padding: 30px 18px 26px; }
+    .landing-center { gap: 24px; }
+    .btn-main { width: 100%; padding: 16px 24px; }
+    .btn-sobre { width: 100%; }
+    .prepare-content { max-width: 100%; padding: 26px 20px 24px; }
+    .instructions li { padding: 18px 18px; }
+    .share-row { grid-template-columns: 1fr; }
+    #qrcode, .share-square { width: 180px; height: 180px; }
+    .share-btn { width: 76px; height: 76px; }
+  }
+
+  @media (max-width: 700px) {
+    .title { font-size: 2.4rem; }
+    .subtitle { font-size: 1rem; }
+    .prepare-content { padding: 22px 18px 22px; }
+    .instructions li { font-size: 0.96rem; }
+    #play-hint { font-size: 0.85rem; }
+    .modal-content { font-size: 0.95rem; }
+    .modal-title { font-size: 1.1rem; }
+    .ficha, .ficha-title { font-size: 0.95rem; }
+  }
+
+  @media (max-height: 720px) and (max-width: 700px) {
+    .page { padding: 20px 16px 18px; }
+    .title { font-size: 2.1rem; }
+    .subtitle { font-size: 0.95rem; }
+    .share-row { gap: 14px; }
+    #qrcode, .share-square { width: 150px; height: 150px; }
+    .share-btn { width: 64px; height: 64px; }
+    .btn-main { padding: 14px 22px; }
+  }
+
+  /* ── PAGES ─────────────────────────────────────────────────────── */
+  .page {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+  }
+  .page.active { display: flex; }
+
+  /* ── TYPOGRAPHY ────────────────────────────────────────────────── */
+  .title {
+    font-size: 26px;
+    letter-spacing: 6px;
+    color: #fff;
+    font-weight: normal;
+    text-align: center;
+  }
+  .subtitle {
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: #fff;
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  /* ── BUTTONS ───────────────────────────────────────────────────── */
+  .btn-main {
+    background: none;
+    border: 1px solid #ddd;
+    color: #ddd;
+    font-family: inherit;
+    font-size: 18px;
+    letter-spacing: 4px;
+    padding: 16px 40px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn-main:active { background: #ddd; color: #000; }
+  .btn-main:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    border-color: #555;
+    color: #555;
+  }
+  .btn-main:disabled:active { background: none; color: #555; }
+
+  .btn-sobre {
+    background: none;
+    border: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 18px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    padding: 14px 20px;
+  }
+  .btn-sobre:active { color: #888; }
+
+  /* ── PAGE 1: LANDING ───────────────────────────────────────────── */
+  #page-landing { justify-content: space-between; }
+  .landing-center {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+  }
+  .landing-center .subtitle { max-width: 520px; }
+  .page-bottom {
+    padding-bottom: 8px;
+  }
+
+  /* ── PAGE 2: PREPARAR ──────────────────────────────────────────── */
+  #page-prepare { justify-content: space-between; }
+  .prepare-content {
+    flex: 1;
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 28px;
+    overflow-y: auto;
+  }
+  .prepare-content .title { margin-bottom: 10px; }
+  .prepare-content .subtitle { margin-bottom: 0; }
+
+  .prepare-home {
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+    padding: 8px 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s;
+    text-align: center;
+  }
+  .prepare-home:active { opacity: 0.55; }
+  .prepare-home:focus-visible { outline: 1px dashed #888; outline-offset: 4px; }
+
+  .prepare-block {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+  }
+
+  .instructions {
+    list-style: none;
+    counter-reset: step;
+    width: 100%;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .instructions li {
+    counter-increment: step;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    color: #ccc;
+    line-height: 1.6;
+  }
+  .instructions li::before {
+    content: counter(step) ": ";
+    color: #888;
+  }
+
+  .a2a_kit { margin-left: auto; }
+  .a2a_kit a { display: inline-block; width: 32px !important; height: 32px !important; margin: 0 2px !important; }
+  .a2a_kit a svg { width: 32px !important; height: 32px !important; }
+
+  .share-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 12px;
+  }
+  #qrcode {
+    width: 180px;
+    height: 180px;
+    background: #fff;
+    padding: 8px;
+    display: block;
+  }
+  .share-square {
+    width: 180px;
+    height: 180px;
+    display: grid;
+    place-items: center;
+  }
+  .share-btn {
+    background: none;
+    border: 1px solid #ddd;
+    color: #ddd;
+    width: 84px;
+    height: 84px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    margin: 0;
+  }
+  .share-btn svg { width: 42px; height: 42px; display: block; }
+  .share-btn:active { background: #ddd; color: #000; }
+
+  #play-hint {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #555;
+    margin-top: 18px;
+    text-align: center;
+    min-height: 18px;
+  }
+  #play-hint.ready { color: #7c7; }
+  #play-hint.error { color: #c77; }
+
+  /* ── PAGE 3: PLAYER ────────────────────────────────────────────── */
+  #page-player { padding: 0; background: #000; }
+  .player {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+  }
+  #dark {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #info {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    font-size: 14px;
+    color: #555;
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  #muted-badge {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: rgba(200, 60, 60, 0.85);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    letter-spacing: 1px;
+    display: none;
+    pointer-events: none;
+  }
+
+  /* ── MODAL SOBRE ───────────────────────────────────────────────── */
+  #modal-sobre {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.96);
+    z-index: 100;
+    overflow-y: auto;
+    padding: 60px 24px 40px;
+    -webkit-overflow-scrolling: touch;
+  }
+  #modal-sobre.show { display: block; }
+  .modal-close {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 44px;
+    line-height: 1;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    z-index: 101;
+  }
+  .modal-content {
+    max-width: 660px;
+    margin: 0 auto;
+    color: #ccc;
+    font-size: 18px;
+    line-height: 1.75;
+  }
+  .modal-title {
+    font-size: 19px;
+    letter-spacing: 2px;
+    font-weight: normal;
+    color: #fff;
+    margin-bottom: 28px;
+  }
+  .modal-text p { margin-bottom: 16px; }
+  .modal-text em { font-style: italic; }
+  .modal-text strong { color: #fff; font-weight: normal; }
+  .ficha-title {
+    margin-top: 30px;
+    margin-bottom: 14px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    font-weight: normal;
+    color: #fff;
+  }
+  .ficha {
+    list-style: none;
+    font-size: 18px;
+    line-height: 1.9;
+    color: #aaa;
+  }
+
+  /* ── MOBILE ────────────────────────────────────────────────────── */
+  @media (max-width: 700px) {
+    .page { padding: 18px 18px; }
+    .title { font-size: 20px; letter-spacing: 4px; }
+    .subtitle { font-size: 13px; letter-spacing: 2px; }
+    .btn-main { padding: 12px 28px; font-size: 16px; letter-spacing: 3px; }
+    .btn-sobre { font-size: 15px; padding: 10px 16px; }
+    .prepare-content { padding-top: 8px; }
+    .prepare-content .title { margin-bottom: 8px; }
+    .prepare-content .subtitle { margin-bottom: 0; }
+    .prepare-block { padding: 10px 0; }
+    #qrcode { width: 130px; height: 130px; padding: 6px; }
+    .share-square { width: 130px; height: 130px; }
+    .share-btn { width: 60px; height: 60px; }
+    .share-btn svg { width: 30px; height: 30px; }
+    .share-row { margin-top: 6px; }
+    .instructions { gap: 10px; margin-bottom: 16px; }
+    .instructions li { font-size: 14px; letter-spacing: 1px; line-height: 1.45; }
+    #play-hint { font-size: 12px; margin-top: 10px; min-height: 14px; }
+    #info { font-size: 12px; }
+    #modal-sobre { padding: 60px 20px 30px; }
+    .modal-content { font-size: 15px; }
+    .modal-title { font-size: 16px; margin-bottom: 22px; }
+    .ficha, .ficha-title { font-size: 15px; }
+  }
+
+  /* ── MOBILE LANDSCAPE / phones bem pequenos ────────────────────── */
+  @media (max-height: 720px) and (max-width: 700px) {
+    .title { font-size: 18px; letter-spacing: 4px; }
+    .subtitle { font-size: 12px; letter-spacing: 1.5px; }
+    .prepare-block { padding: 4px 0; }
+    .instructions { gap: 8px; margin-bottom: 12px; }
+    .instructions li { font-size: 13px; }
+    #qrcode { width: 110px; height: 110px; }
+    .share-square { width: 110px; height: 110px; }
+    .share-btn { width: 54px; height: 54px; }
+    .share-btn svg { width: 26px; height: 26px; }
+    .btn-main { padding: 10px 24px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ PAGE 1 — LANDING ═══════════════════════════════════════════ -->
+<section id="page-landing" class="page active">
+  <div class="landing-center">
+  <h1>CELULAR_CORAL <br>dissimulation#5</h1>
+  <h2>peça para múltiplos dispositivos <br>localmente situados</h2>
+  <p style="text-align:right;"><small><a href="https://artes.uff.br/giulianobici" target="_blank" rel="noopener">Giuliano Obici </a>(2026)</small></p>
+
+  <br>
+    
+    <button id="btn-iniciar" class="btn-main" style="padding: 30px 60px; font-size: 1.5rem; min-width: 150px;">INICIAR</button>
+    </div>
+ 
+  </div>
+  <div class="page-bottom">
+    <button class="btn-sobre" data-action="open-sobre">[ SOBRE ]</button>
+  </div>
+</section>
+
+<!-- ═══ PAGE 2 — PREPARAR ══════════════════════════════════════════ -->
+<section id="page-prepare" class="page">
+  <div class="prepare-content">
+    <div class="prepare-home" role="button" tabindex="0" aria-label="voltar ao início">
+      <h1>CELULAR_CORAL dissimulation#5</h1>
+      <p class="subtitle">peça para múltiplos dispositivos<br>localmente situados</p>
+    </div>
+
+    <div class="prepare-block">
+      <h3>INSTRUÇÕES</h3>
+      <ul class="instructions">
+    
+        <li>
+          <button type="button" id="share-inline" style="display:inline-flex; align-items:center; gap:10px; color:#ddd; text-decoration:none; background:none; border:none; padding:0; cursor:pointer;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> 
+                      Convidar pessoas próximas
+          </button>
+          <div class="share-row" style="display:inline-flex; align-items:center; gap:12px; margin-left:12px;">
+            <img id="qrcode" src="https://www.artes.uff.br/giulianobici/data/uploads/video/qrcode.png" alt="QR code">
+          </div>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a9 9 0 0 1 0 14.14"></path></svg>Aumentar volume do aparelho: 100%</li>
+
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+            <polygon points="5 4 19 12 5 20"></polygon>
+          </svg>
+          Juntos e sincronizados pressionar o botão (▶ PLAY)
+        </li>
+        
+      </ul>
+      <p id="play-hint">carregando vídeo…</p>
+      <button id="btn-play" class="btn-main" disabled style="padding: 28px 60px; font-size: 1.5rem; min-width: 250px; display: inline-flex; align-items: center; gap: 10px;">
+         ▶ PLAY
+      </button>
+    </div>
+  </div>
+  <div class="page-bottom">
+    <button class="btn-sobre" data-action="open-sobre">[ SOBRE ]</button>
+  </div>
+</section>
+
+<!-- ═══ PAGE 3 — PLAYER ════════════════════════════════════════════ -->
+<section id="page-player" class="page">
+  <video id="player-a" class="player" playsinline preload="none" src="https://www.artes.uff.br/giulianobici/data/uploads/video/v3_keyframes.mp4"></video>
+  <div id="dark"></div>
+  <div id="muted-badge">🔇 SEM SOM (autoplay mobile)</div>
+  <div id="info">
+    <span id="now"></span>
+    <span id="timer"></span>
+  </div>
+</section>
+
+<!-- ═══ MODAL SOBRE ════════════════════════════════════════════════ -->
+<div id="modal-sobre">
+  <button class="modal-close" data-action="close-sobre" aria-label="fechar">×</button>
+  <div class="modal-content">
+    <h1 >CELULAR_CORAL: Dissimulation #5</h1>
+    
+    <div class="modal-text">
+
+     <p>
+Celular Coral é uma obra participativa para múltiplos celulares localmente situados. O público é convidado a se reunir, sincronizar os aparelhos e formar um coral de ‘voces simulacra’. </br></br>
+
+A peça é uma releitura de "Laptop Coral", originalmente concebida para computadores em 2012 e executada no festival Wien Modern na Áustria. Adaptada aos tempos da tecnologia móvel, os laptops cedem lugar aos celulares e o público passa a ser ativo, transformando seus aparelhos em ventríloquos de um coro maquínico.</br></br>
+
+A obra propõe desindividualizar a escuta através de uma ação coletiva, coordenada e mediada pelos aparelhos. O resultado é a criação de um simulacrum polifônico dissimulado. O público é convidado a rearticular a isolante pervasividade tecnológica dos aparelhos, para se reconectar localmente em grupo através de uma experiência de escuta compartilhada.
+
+</p>
+<br>
+    </div>
+    <h2>Ficha técnica</h2>
+    <ul class="ficha">
+      <li>Autor:  <a href="https://artes.uff.br/giulianobici" target="_blank" rel="noopener">Giuliano Obici</a>
+</li>
+      <li>Título da proposta: CELULAR CORAL: Dissimulation #5</li>
+      <li>Ano: 2026</li>
+      <li>Dados técnicos: programação web</li>
+      <li>Desenvolvedor: Filipe Britto</li>
+      <li>Voz: Salome Kammer interpretando solo de "Bare Branches" de Pia Palme</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║                                                                  ║
+// ║   ▼▼▼   ÁREA DA PARTITURA — Giuliano edita aqui   ▼▼▼            ║
+// ║                                                                  ║
+// ║   FRAGMENTS = lista de timecodes do vídeo (roda 1x na carga).    ║
+// ║   partitura() = roda A CADA PLAY (sorteia valores novos).        ║
+// ║                                                                  ║
+// ║   A implementação (player, helpers, etc) está mais abaixo.       ║
+// ║   Referência rápida de comandos no rodapé desta área.            ║
+// ║                                                                  ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+
+// ════ FRAGMENTOS DO VIDEO ════════════════════════════════════════════
+// cada item: id, start (s), end (s).
+// dá pra adicionar outras propriedades (fadeIn, alpha, dark, mute, etc.)
+// que viram default pra qualquer { id: n } usado na partitura.
+
+const FRAGMENTS = [
+
+  /* 1.1 disconnect */ { id: 'disc', start: 155.5, end: 155.6 },
+  /* 0.8 connect    */ { id: 'con',  start: 155.8, end: 155.9 },
+
+  /////////////////////////////////////////////////////////////
+  // WORDS
+  /////////////////////////////////////////////////////////////
+  /* dur    nome              id:                              */
+  /* 1.1    andI       */ { id: 'w1',  start: 115,    end: 116.1 },
+  /* 2.5    un easy    */ { id: 'w2',  start: 43.5,   end: 46    },
+  /* 1.2    eat        */ { id: 'w3',  start: 25.7,   end: 26.9  },
+  /* 2      am         */ { id: 'w4',  start: 14,     end: 16    },
+  /* 7      world      */ { id: 'w5',  start: 148,    end: 155   },
+  /* 3.7    world      */ { id: 'w7',  start: 124,    end: 127.7 },
+  /* 1.05   mothers    */ { id: 'w9',  start: 116.45, end: 117.5 },
+  /* 1.1    andI       */ { id: 'w10', start: 115,    end: 116.1 },
+  /* 1.5    body       */ { id: 'w11', start: 113,    end: 114.5 },
+  /* 3.6    get        */ { id: 'w14', start: 102,    end: 105.6 },
+  /* 10.8   r-erkant   */ { id: 'w15', start: 91,     end: 101.8 },
+  /* 3.5    toward     */ { id: 'w17', start: 73,     end: 76.5  },
+  /* 1.2    gives2     */ { id: 'w18', start: 54.3,   end: 55.5  },
+  /* 0.46   what2      */ { id: 'w19', start: 53.55,  end: 54    },
+  /* 1      gives      */ { id: 'w22', start: 38,     end: 39    },
+  /* 1.2    what       */ { id: 'w23', start: 34.8,   end: 36    },
+  /* 1      beak       */ { id: 'w24', start: 28.5,   end: 29.5  },
+  /* 1.2    eat        */ { id: 'w25', start: 25.7,   end: 26.9  },
+  /* 0.9    take       */ { id: 'w26', start: 24.8,   end: 25.7  },
+  /* 1.4    where2     */ { id: 'w27', start: 20.1,   end: 21.5  },
+  /* 2      am         */ { id: 'w28', start: 14,     end: 16    },
+  /* 0.81   where1     */ { id: 'w29', start: 10,     end: 10.8  },
+
+  /////////////////////////////////////////////////////////////
+  // VOGAIS
+  /////////////////////////////////////////////////////////////
+  /* s      nome      id                                       */
+  /* 7.24   aa3    */ { id: 'v15', start: 83,   end: 90.24 },
+  /* 3      aa2    */ { id: 'v14', start: 75.5, end: 78.5  },
+  /* 3.4    -ss    */ { id: 'v13', start: 68.6, end: 72    },
+  /* 5.2    ae     */ { id: 'v12', start: 63.1, end: 68.3  },
+  /* 6.9    aa     */ { id: 'v11', start: 56.2, end: 63.1  },
+  /* 12.5   aaa    */ { id: 'v10', start: 56,   end: 68.5  },
+  /* 4      i6     */ { id: 'v9',  start: 49,   end: 53    },
+  /* 4.3    i5     */ { id: 'v8',  start: 39,   end: 43.3  },
+  /* 1.7    uo2    */ { id: 'v7',  start: 36,   end: 37.7  },
+  /* 4.7    i4     */ { id: 'v6',  start: 30,   end: 34.7  },
+  /* 1.3    uo     */ { id: 'v5',  start: 27,   end: 28.3  },
+  /* 2.5    ua     */ { id: 'v4',  start: 22,   end: 24.5  },
+  /* 3      i3     */ { id: 'v3',  start: 16,   end: 19    },
+  /* 3      i2     */ { id: 'v2',  start: 11,   end: 14    },
+  /* 6.2    i1     */ { id: 'v1',  start: 2.6,  end: 8.8   },
+];
+
+// duração natural de cada fragmento — útil pra usar como base na partitura
+// (ex: dur: dur_id.v7 * 0.5 = metade da duração natural de v7)
+const dur_id = Object.fromEntries(FRAGMENTS.map(f => [f.id, f.end - f.start]));
+
+
+// ════ PARTITURA — 5 SEÇÕES (rodam A CADA PLAY) ═══════════════════════
+// tocadas em ordem: a → b → c → d → e
+// cada seção é um array de eventos. todo evento precisa de { id: n }.
+// SEGUNDO ARGUMENTO (opcional) de run_* = TEMPO LIMITE da seção em segundos.
+
+function partitura() {
+
+  // PARTE A (INÍCIO / DISC):
+  run_a([
+
+    { id: 'disc',
+      start: rand(155.41, 155.45),
+      dur:   rand(0.01, 0.2),
+      times: rand(2, 3),
+      // fadeIn: 10,
+      limit: 7 },
+
+    { id: 'disc',
+      start: rand(155.45, 155.49),
+      dur:   rand(0.05, 0.4),
+      times: rand(2, 3),
+      // fadeIn: 10,
+      limit: 8 },
+
+    { id: 'disc', grain: { anchor: 'start', expand: 20, step: 0.08 } },
+
+    { id: 'disc', times: 2 },
+
+    { id: 'disc',
+      start: rand(156.2, 156.35),
+      dur:   rand(0.05, 0.4),
+      times: rand(2, 3),
+      limit: 8 },
+
+    { id: 'disc',
+      start: rand(156.35, 156.55),
+      dur:   rand(0.01, 0.2),
+      times: rand(2, 3),
+      // fadeIn: 10,
+      limit: 7 },
+
+  ]) // SEM TIMER da seção — cada objeto tem seu próprio limit
+
+
+  // PARTE B (VOGAIS):
+  run_b([
+
+    { id: 'v7', times: 2 },
+    { id: 'v7', dur: dur_id.v7 * 0.5,  limit: 5 },
+    { id: 'v7', dur: dur_id.v7 * 0.25, limit: 2.5 },
+
+    { id: 'v8', times: 2 },
+    { id: 'v8', dur: dur_id.v8 * 0.5,  limit: 4 },
+    { id: 'v8', dur: dur_id.v8 * 0.25, limit: 2 },
+
+    { id: 'v9', times: 2 },
+    { id: 'v9', dur: dur_id.v9 * 0.5,  limit: 3 },
+    { id: 'v9', dur: dur_id.v9 * 0.25, limit: 1.5 },
+
+    // VOGAIS As (v10 a v15)
+    { id: 'v10', times: 2 },
+    { id: pick(['v11', 'v12', 'v14', 'v15']),
+      dur: rand(0.5, 1),
+      times: rand(2, 4),
+      limit: 20 },
+
+    // VOGAIS Is (v1 a v3, v6, v8, v9)
+    { id: pick(['v1', 'v2', 'v3', 'v6', 'v8', 'v9']),
+      dur: rand(0.5, 1),
+      times: rand(2, 4) },
+
+  ], 60) // >>-----> DURAÇÃO do TIMER de B em segundos
+
+
+  // PARTE C (PALAVRAS):
+  // FIXED — sorteia 1 id e 1 dur, repete o mesmo nas N reps:
+  run_c([
+
+    { id: pick_fixed(['w19', 'w23', 'w27', 'w29']),
+      dur: rand_fixed(0.5, 1.5),
+      times: rand(1, 3),
+      limit: 20 },
+
+    { id: pick_fixed(['w19', 'w23', 'w27', 'w29']),
+      dur: rand_fixed(0.25, 0.5),
+      times: rand(1, 3),
+      limit: 15 },
+
+    { id: pick_fixed(['w19', 'w23', 'w27', 'w29']),
+      dur: rand_fixed(0.01, 0.25),
+      times: rand(1, 3),
+      limit: 10 },
+
+    { id: pick_fixed(['w19', 'w23', 'w27', 'w29']),
+      dur: rand_fixed(0.5, 1.5),
+      times: rand(1, 3),
+      limit: 8 },
+
+    { id: pick_fixed(['w19', 'w23', 'w27', 'w29']),
+      dur: rand_fixed(0.25, 0.5),
+      times: rand(1, 3),
+      limit: 6 },
+
+    { id: pick_fixed(['w19', 'w23', 'w27', 'w29']),
+      dur: rand_fixed(0.01, 0.25),
+      times: rand(1, 3),
+      limit: 11 },
+
+  ], 70) // >>-----> DURAÇÃO do TIMER de C em segundos
+
+
+  // PARTE D (SILÊNCIOS):
+  // v13 ssss, v4 e v5 uoooo
+  run_d([
+
+    { id: 'v13', times: 2 },
+
+    { id: pick_fixed(['v4', 'v5']),
+      times: rand(1, 3),
+      limit: 10 },
+
+    { id: pick_fixed(['v4', 'v5']),
+      dur: rand_fixed(0.25, 1),
+      times: rand(1, 3),
+      limit: 10 },
+
+    { id: pick_fixed(['v4', 'v5', 'v13']),
+      dur:  rand_fixed(0.01, 0.5),
+      dark: pick([true, false]),
+      times: rand(1, 3),
+      limit: 20 },
+
+  ], 60) // >>-----> DURAÇÃO do TIMER de D em segundos
+
+
+  // PARTE E (FIM)
+  run_e([
+
+    { id: 'v13', start: rand(68.6, 71),    dur: rand(0.25,  0.5),   dark: chance(0.25), limit: 20 },
+    { id: 'v13', start: rand(68.6, 71),    dur: rand(0.125, 0.25),  dark: chance(0.5),  limit: 15 },
+    { id: 'v13', start: rand(68.6, 71),    dur: rand(0.06,  0.125), dark: chance(0.75), limit: 8  },
+    { id: 'v13', start: rand(68.6, 71),    dur: rand(0.01,  0.06),  dark: chance(0.95), limit: 4  },
+
+    { id: 'con', start: rand(156,   156.5), dur: rand(0.25, 0.5),   dark: chance(0.95), limit: 8  },
+    { id: 'con', start: rand(156.3, 156.5), dur: rand(0.1,  0.25),  dark: chance(0.6),  limit: 16 },
+
+    { id: 'v15' },
+    { id: 'con', grain: { anchor: 'start', expand: 15, step: 0.08 }, dark: chance(1) },
+    { id: 'con', dark: false, times: 3 },
+    { id: 'con', start: rand(156, 156.6), dur: 0.2, limit: 10 },
+
+  ]) // SEM TIMER da seção — cada objeto controla seu próprio escopo
+
+}
+
+
+// ── REFERÊNCIA RÁPIDA DE COMANDOS ───────────────────────────────────
+//
+// TEMPO LIMITE POR SEÇÃO (segundo argumento de run_*):
+// run_a([ ... ], 30)                  limite de 30s na seção a
+// run_b([ ... ], rand_fixed(40, 60))  limite aleatório entre 40 e 60s
+// run_c([ ... ])                      sem limite (toca tudo uma vez)
+//
+// COM LIMITE → LOOP: a seção roda em loop até o limite estourar.
+//   Se a lista de eventos acaba antes (ex: 5s de eventos com limite 60s),
+//   volta pro começo e toca de novo, até dar o tempo.
+// SEM LIMITE: toca a lista uma vez e segue.
+//
+// LOOP COM SORTEIO NOVO A CADA VOLTA:
+// Por padrão o loop repete os MESMOS eventos. Pra sortear valores novos
+// a cada volta, embrulha a lista numa função:
+//
+//   run_b(() => [
+//     { id: 'disc', start: rand(150, 155) }
+//   ], 60)
+//
+// O `() =>` faz o sorteio rodar A CADA VOLTA do loop.
+// Sem `() =>`, os helpers rodam só uma vez (na primeira passada).
+//
+// BÁSICO:
+// { id: 1 }                           toca o fragmento 1 inteiro
+// { id: 1, dur: 2 }                   só os primeiros 2s (trunca)
+//
+// LOOP:
+// { id: 2, times: 3 }                 repete 3 vezes
+//
+// LIMIT do OBJETO (timer dentro do objeto, hierarquia acima do times):
+// { id: 2, times: 3, limit: 20 }
+//   → toca os 3 times. Se sobrar tempo (< 20s), RE-EXPANDE o objeto:
+//     re-roda o times do zero (rand re-sortei novo). Continua até 20s.
+//
+// { id: 2, times: rand(2,4), limit: 20 }
+//   → cada iteração sorteia 2, 3 ou 4 reps. Re-itera até 20s.
+//
+// { id: 2, times: rand(2,4), limit: rand_fixed(8,15) }
+//   → limit também pode ser aleatório.
+//
+// SÍNTESE GRANULAR:
+// { id: 5, grain: { anchor: 'start', expand: 4 } }      início fixo, grão cresce
+// { id: 5, grain: { anchor: 'start', contract: 4 } }    início fixo, grão encolhe
+// { id: 5, grain: { anchor: 'end',   expand: 4 } }      fim fixo, grão cresce
+// { id: 5, grain: { anchor: 'end',   contract: 4 } }    fim fixo, grão encolhe
+// { id: 5, grain: { anchor: 'start', expand: 4, step: 1 } }   step em segundos
+//
+// FADES:
+// { id: 1, fadeIn: 2 }                fade in de 2s
+// { id: 1, fadeOut: 3 }               fade out de 3s
+//
+// AUDIO / VISUAL:
+// { id: 1, volume: 0.5 }              volume 0–1
+// { id: 1, mute: true }               video sem som
+// { id: 1, alpha: 0.3 }               transparência do video 0–1
+// { id: 1, dark: true }               som sem video (tela preta)
+// { id: 1, speed: 1.5 }               velocidade (afeta pitch também)
+//
+// DEFAULTS POR FRAGMENTO:
+// se quiser que o fragmento sempre toque com algo, põe na lista FRAGMENTS:
+//   { id: 9, start: 68, end: 72, dark: true }
+// daí qualquer { id: 9 } na partitura já vem com dark: true.
+// pra anular pontualmente: { id: 9, dark: false }
+//
+// ALEATORIEDADE
+//
+// 4 helpers principais — cada um tem uma versão "var" (default) e
+// uma "_fixed". A diferença é QUANDO o sorteio acontece:
+//
+//   VAR:    sorteia NOVO valor a CADA repetição do times/grão.
+//   FIXED:  sorteia 1 valor que vale por TODAS as reps do times daquele
+//           objeto. Quando a seção dá loop (no LIMIT da run), o fixed
+//           sorteia de novo — fica fixo só pelo escopo daquele objeto
+//           dentro da volta atual do loop.
+//
+// rand(min, max)             decimal entre min e max
+// irnd(min, max)             inteiro entre min e max (inclusivo)
+// pick([a, b, c])            sorteia da lista
+// chance(p)                  bool com probabilidade p (0 a 1)
+//
+// rand_fixed(min, max)       versões fixas das 4 acima
+// irnd_fixed(min, max)
+// pick_fixed([a, b, c])
+// chance_fixed(p)
+//
+// EXEMPLOS — VAR (re-rola por repetição):
+//
+//   { id: 1, dur: rand(0.5, 2), times: 5 }
+//     → 5 reps de id 1, cada uma com dur diferente entre 0.5 e 2
+//
+//   { id: pick(['v1','v2','v3']), times: 4 }
+//     → 4 reps, cada uma sorteia um id diferente da lista
+//
+//   { id: 'disc', grain: { anchor: 'start', expand: 10, step: rand(0.05, 0.15) } }
+//     → step do grain re-rola a cada grão (10 grãos com steps variados)
+//
+//   { id: 1, dark: chance(0.3), times: 5 }
+//     → cada uma das 5 reps tem 30% de chance de ser dark
+//
+// EXEMPLOS — FIXED (sorteia uma vez, repete o mesmo):
+//
+//   { id: pick_fixed(['v1','v2','v3']), times: 5 }
+//     → sorteia 1 fragmento e toca ele 5x
+//
+//   { id: 1, fadeIn: rand_fixed(1, 3) }
+//     → fadeIn varia por evento mas é o mesmo nas reps internas
+//
+// O times também pode ser aleatório (resolve uma vez pra fixar o N):
+//
+//   { id: 'v5', times: irnd(2, 4) }    → 2, 3 ou 4 reps
+//
+// Math.random() puro continua funcionando — comporta-se como _fixed.
+//
+// SE QUISER FIXAR PRO RUN INTEIRO, declara variável no topo do partitura():
+//
+//   const TEMPO_A = irnd(20, 40)
+//   run_a([ ... ], TEMPO_A)
+
+
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║                                                                  ║
+// ║   ▲▲▲    FIM DA ÁREA DA PARTITURA    ▲▲▲                         ║
+// ║                                                                  ║
+// ║   Tudo abaixo é a implementação. Não precisa mexer.              ║
+// ║                                                                  ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+
+// ── helpers de aleatoriedade ────────────────────────────────────────
+function rand(min, max) {
+  const fn = () => Math.random() * (max - min) + min;
+  fn.__lazy = true;
+  return fn;
+}
+function irnd(min, max) {
+  const fn = () => Math.floor(Math.random() * (max - min + 1)) + min;
+  fn.__lazy = true;
+  return fn;
+}
+function pick(arr) {
+  const fn = () => arr[Math.floor(Math.random() * arr.length)];
+  fn.__lazy = true;
+  return fn;
+}
+function chance(p) {
+  const fn = () => Math.random() < p;
+  fn.__lazy = true;
+  return fn;
+}
+function rand_fixed(min, max) {
+  const fn = () => Math.random() * (max - min) + min;
+  fn.__lazy_fixed = true;
+  return fn;
+}
+function irnd_fixed(min, max) {
+  const fn = () => Math.floor(Math.random() * (max - min + 1)) + min;
+  fn.__lazy_fixed = true;
+  return fn;
+}
+function pick_fixed(arr) {
+  const fn = () => arr[Math.floor(Math.random() * arr.length)];
+  fn.__lazy_fixed = true;
+  return fn;
+}
+function chance_fixed(p) {
+  const fn = () => Math.random() < p;
+  fn.__lazy_fixed = true;
+  return fn;
+}
+
+// resolve — chama TODOS os thunks (var + fixed). Usado pra times/grain
+// (que resolvem uma vez antes do loop) e pra cada iteração do times
+// dentro de uma expansão (depois que fixed já foi snapshotado).
+function resolve(v) {
+  if (typeof v === 'function' && (v.__lazy || v.__lazy_fixed)) return v();
+  if (Array.isArray(v)) return v.map(resolve);
+  if (v && typeof v === 'object') {
+    const out = {};
+    for (const k in v) out[k] = resolve(v[k]);
+    return out;
+  }
+  return v;
+}
+
+// resolveFixed — chama SÓ os thunks fixed, deixa var passar.
+// Usado pra criar o snapshot da expansão do evento: fixed congela uma vez
+// pra todas as N reps, var continua thunk pra re-rolar por rep.
+function resolveFixed(v) {
+  if (typeof v === 'function' && v.__lazy_fixed) return v();
+  if (typeof v === 'function') return v;
+  if (Array.isArray(v)) return v.map(resolveFixed);
+  if (v && typeof v === 'object') {
+    const out = {};
+    for (const k in v) out[k] = resolveFixed(v[k]);
+    return out;
+  }
+  return v;
+}
+
+// ── coleta das seções ───────────────────────────────────────────────
+// Cada seção armazena rawObjects (lista crua) ao invés de eventos
+// pré-expandidos. Cada objeto é expandido on-demand quando vai tocar
+// (em startObjectIteration), e re-expandido quando precisa loopar
+// (por limit do objeto ou da run). Assim re-rola times/fixed/var.
+function run_a(score, limit) { (window._sections ||= []).push({ name: 'A', score, rawObjects: expandRawObjects(score), limit }); }
+function run_b(score, limit) { (window._sections ||= []).push({ name: 'B', score, rawObjects: expandRawObjects(score), limit }); }
+function run_c(score, limit) { (window._sections ||= []).push({ name: 'C', score, rawObjects: expandRawObjects(score), limit }); }
+function run_d(score, limit) { (window._sections ||= []).push({ name: 'D', score, rawObjects: expandRawObjects(score), limit }); }
+function run_e(score, limit) { (window._sections ||= []).push({ name: 'E', score, rawObjects: expandRawObjects(score), limit }); }
+
+// expandRawObjects: pega o score (array ou função) e devolve a lista crua
+// de objetos. NÃO expande times.
+function expandRawObjects(score) {
+  const arr = typeof score === 'function' ? score() : score;
+  return [].concat(arr);
+}
+
+// expandObject: expande UM objeto (uma iteração) → array de eventos.
+// Resolve times (re-rola por iteração), aplica snapshot fixed/var, faz
+// merge com FRAGMENTS, normaliza.
+function expandObject(rawEv) {
+  let n, isGrain, grainCfg;
+  if (rawEv.grain !== undefined) {
+    isGrain  = true;
+    grainCfg = resolve(rawEv.grain);
+    n        = grainCfg.expand ?? grainCfg.contract;
+    if (typeof n !== 'number') {
+      throw new Error('grain.expand ou grain.contract precisa ser número: ' + JSON.stringify(grainCfg));
+    }
+  } else {
+    isGrain = false;
+    n       = rawEv.times !== undefined ? resolve(rawEv.times) : 1;
+  }
+
+  // Snapshot: resolve FIXED uma vez pra esta iteração (congela pelas N reps).
+  // VAR continua thunk no snapshot e re-rola por rep. Próxima iteração
+  // (loop por limit) chama expandObject de novo → novo snapshot.
+  const snapshot = resolveFixed(rawEv);
+
+  const evs = [];
+  for (let i = 0; i < n; i++) {
+    let ev = resolve(snapshot);
+    if (isGrain) ev.grain = grainCfg;
+
+    if (ev.id === undefined) {
+      throw new Error('evento sem id — todo evento precisa de { id: n }: ' + JSON.stringify(ev));
+    }
+    const fr = FRAGMENTS.find(x => x.id === ev.id);
+    if (!fr) throw new Error('fragmento id:' + ev.id + ' não encontrado em FRAGMENTS');
+
+    const { id: _ignored, ...frDefaults } = fr;
+    ev = { ...frDefaults, ...ev };
+
+    if (ev.dur !== undefined) ev.end = ev.start + ev.dur;
+    if (ev.end === undefined) throw new Error('id:' + ev.id + ' sem end nem dur');
+    if (ev.end - ev.start <= 0) {
+      throw new Error('duração ≤ 0 em id:' + ev.id + ' (start=' + ev.start + ', end=' + ev.end + ')');
+    }
+
+    if (isGrain) {
+      const base      = ev.end - ev.start;
+      const step      = grainCfg.step || 0.5;
+      const isExpand  = grainCfg.expand !== undefined;
+      const anchorEnd = grainCfg.anchor === 'end';
+      const grainDur  = Math.max(0.01, base + (isExpand ? step * i : -step * i));
+      const s = anchorEnd ? ev.end - grainDur : ev.start;
+      const e = anchorEnd ? ev.end            : ev.start + grainDur;
+      evs.push(normalize({ ...ev, start: s, end: e,
+        fadeIn:  i === 0     ? (ev.fadeIn  || 0) : 0,
+        fadeOut: i === n - 1 ? (ev.fadeOut || 0) : 0 }));
+    } else {
+      evs.push(normalize({ ...ev,
+        fadeIn:  i === 0     ? (ev.fadeIn  || 0) : 0,
+        fadeOut: i === n - 1 ? (ev.fadeOut || 0) : 0 }));
+    }
+  }
+  return evs;
+}
+
+function normalize(ev) {
+  const end = ev.end ?? (ev.start + (ev.dur || 0));
+  return {
+    ...ev,
+    end,
+    volume:  ev.mute ? 0 : (ev.volume ?? 1),
+    alpha:   ev.dark ? 0 : (ev.alpha  ?? 1),
+    speed:   ev.speed  || 1,
+    fadeIn:  ev.fadeIn  || 0,
+    fadeOut: ev.fadeOut || 0,
+    label:   Number(ev.start).toFixed(1) + 's  ' + Number(end - ev.start).toFixed(1) + 's',
+  };
+}
+
+// ── player ──────────────────────────────────────────────────────────
+let ps = null;
+let vidA, activeVid;
+
+function startPartitura() {
+  // reset + re-roda partitura()
+  window._sections = [];
+  try {
+    partitura();
+  } catch (e) {
+    console.error('erro na partitura:', e);
+    showPage('landing');
+    return;
+  }
+
+  vidA = document.getElementById('player-a');
+  activeVid = vidA;
+
+  const sections = window._sections || [];
+  const totalRawObjects = sections.reduce((n, s) => n + s.rawObjects.length, 0);
+  if (totalRawObjects === 0) {
+    finish();
+    return;
+  }
+
+  ps = {
+    sections,
+    sectionIdx: 0,
+    eventsPlayed: 0, eventsPlayedInSection: 0,
+    currentSection: null, currentEvent: null,
+    alive: true, fadeIv: null, stepTo: null,
+    t0: 0, sectionT0: 0, timerIv: null,
+    objectIdx: -1,
+    objectEvents: [],
+    objectEventIdx: 0,
+    objectT0: undefined,
+    objectLimit: undefined,
+  };
+
+  ps.t0 = performance.now();
+  ps.sectionT0 = ps.t0;
+  startTimer();
+  playNext();
+}
+
+// nextEvent — máquina de estado em 3 níveis:
+//   SEÇÃO  → quando todos os objetos terminam, se sec.limit ainda permite,
+//            regen (re-chama score se for função) e começa de novo no obj 0.
+//   OBJETO → quando todos os times de uma iteração terminam, se obj.limit
+//            ainda permite, RE-EXPANDE o objeto (re-rola times e fixed/var)
+//            e toca de novo. Limit do objeto > times: limit manda. Sem limit,
+//            objeto toca exatamente 1 iteração.
+//   TIMES  → as N reps internas de uma iteração (já estão em objectEvents).
+function startObjectIteration(sec, idx, alsoResetTimer) {
+  const rawEv = sec.rawObjects[idx];
+  ps.objectIdx = idx;
+  ps.objectEvents = expandObject(rawEv);
+  ps.objectEventIdx = 0;
+  if (alsoResetTimer) {
+    ps.objectT0 = performance.now();
+    ps.objectLimit = rawEv.limit !== undefined ? resolve(rawEv.limit) : undefined;
+  }
+}
+
+function resetSectionState() {
+  ps.objectIdx = -1;
+  ps.objectEvents = [];
+  ps.objectEventIdx = 0;
+  ps.objectT0 = undefined;
+  ps.objectLimit = undefined;
+  ps.eventsPlayedInSection = 0;
+  ps.sectionT0 = performance.now();
+}
+
+function nextEvent() {
+  while (ps.sectionIdx < ps.sections.length) {
+    const sec = ps.sections[ps.sectionIdx];
+    const elapsedInSec = (performance.now() - ps.sectionT0) / 1000;
+    const hasLimit = sec.limit !== undefined;
+    const sectionLimitHit = hasLimit && elapsedInSec >= sec.limit;
+    const playedHere = ps.eventsPlayedInSection || 0;
+
+    if (sectionLimitHit && playedHere > 0) {
+      ps.sectionIdx++;
+      resetSectionState();
+      continue;
+    }
+
+    if (ps.objectIdx < 0) {
+      if (sec.rawObjects.length === 0) {
+        ps.sectionIdx++;
+        resetSectionState();
+        continue;
+      }
+      startObjectIteration(sec, 0, true);
+    }
+
+    if (ps.objectEventIdx < ps.objectEvents.length) {
+      const ev = ps.objectEvents[ps.objectEventIdx++];
+      ps.eventsPlayed++;
+      ps.eventsPlayedInSection = playedHere + 1;
+      ps.currentSection = sec;
+      ps.currentEvent = ev;
+      return { section: sec, event: ev };
+    }
+
+    // Iteração do objeto acabou. Object limit + tempo restante? Re-expande.
+    if (ps.objectLimit !== undefined) {
+      const objectElapsed = (performance.now() - ps.objectT0) / 1000;
+      if (objectElapsed < ps.objectLimit) {
+        startObjectIteration(sec, ps.objectIdx, false);
+        if (ps.objectEvents.length > 0) continue;
+      }
+    }
+
+    const nextIdx = ps.objectIdx + 1;
+    if (nextIdx < sec.rawObjects.length) {
+      startObjectIteration(sec, nextIdx, true);
+      continue;
+    }
+
+    if (hasLimit && !sectionLimitHit) {
+      sec.rawObjects = expandRawObjects(sec.score);
+      if (sec.rawObjects.length > 0) {
+        startObjectIteration(sec, 0, true);
+        continue;
+      }
+    }
+
+    ps.sectionIdx++;
+    resetSectionState();
+  }
+  return null;
+}
+
+function playNext() {
+  if (!ps || !ps.alive) return;
+
+  const next = nextEvent();
+  if (!next) { finish(); return; }
+  const { section, event: ev } = next;
+
+  const vid = activeVid;
+  const ovl = document.getElementById('dark');
+
+  vid.playbackRate  = ev.speed;
+  vid.volume        = ev.volume;
+  vid.style.opacity = String(ev.alpha);
+  ovl.style.opacity = ev.dark ? '1' : '0';
+
+  if (ev.fadeIn > 0) {
+    vid.style.opacity = '0';
+    vid.volume = 0;
+    const t0 = Date.now(), va = ev.alpha, vv = ev.volume;
+    if (ps.fadeIv) clearInterval(ps.fadeIv);
+    ps.fadeIv = setInterval(() => {
+      const t = Math.min(1, (Date.now() - t0) / 1000 / ev.fadeIn);
+      if (!ev.dark) vid.style.opacity = String(t * va);
+      vid.volume = t * vv;
+      if (t >= 1) { clearInterval(ps.fadeIv); ps.fadeIv = null; }
+    }, 30);
+  }
+
+  document.getElementById('now').textContent =
+    '[' + section.name + ']  ' + ps.eventsPlayedInSection + '  ' + ev.label;
+
+  let done = false;
+  const onSeeked = () => {
+    if (done) return; done = true;
+    vid.removeEventListener('seeked', onSeeked);
+    if (!ps || !ps.alive) return;
+
+    if (vid.paused) vid.play().catch(() => {});
+    startCheckEnd(vid, ev);
+  };
+  vid.addEventListener('seeked', onSeeked);
+  vid.currentTime = ev.start;
+  setTimeout(() => {
+    if (!done) { done = true; vid.removeEventListener('seeked', onSeeked); onSeeked(); }
+  }, 1500);
+}
+
+function startCheckEnd(vid, ev) {
+  let endDone = false;
+  const checkEnd = () => {
+    if (endDone || !ps || !ps.alive) return;
+
+    if (vid.currentTime >= ev.end) {
+      endDone = true;
+      if (ps.stepTo) clearTimeout(ps.stepTo);
+
+      if (ev.fadeOut > 0) {
+        vid.pause();
+        const o0 = parseFloat(vid.style.opacity) || 1, v0 = vid.volume, t0 = Date.now();
+        if (ps.fadeIv) clearInterval(ps.fadeIv);
+        ps.fadeIv = setInterval(() => {
+          const t = Math.min(1, (Date.now() - t0) / 1000 / ev.fadeOut);
+          vid.style.opacity = String(o0 * (1 - t));
+          vid.volume = v0 * (1 - t);
+          if (t >= 1) {
+            clearInterval(ps.fadeIv); ps.fadeIv = null;
+            playNext();
+          }
+        }, 30);
+      } else {
+        playNext();
+      }
+      return;
+    }
+    if (vid.requestVideoFrameCallback) vid.requestVideoFrameCallback(checkEnd);
+    else requestAnimationFrame(checkEnd);
+  };
+  if (vid.requestVideoFrameCallback) vid.requestVideoFrameCallback(checkEnd);
+  else requestAnimationFrame(checkEnd);
+
+  ps.stepTo = setTimeout(() => {
+    endDone = true;
+    playNext();
+  }, ((ev.end - ev.start) / ev.speed + 2) * 1000);
+}
+
+function finish() {
+  const vid = activeVid || document.getElementById('player-a');
+  if (ps) {
+    ps.alive = false;
+    if (ps.fadeIv) { clearInterval(ps.fadeIv); ps.fadeIv = null; }
+    if (ps.stepTo) { clearTimeout(ps.stepTo); ps.stepTo = null; }
+  }
+  stopTimer();
+
+  if (vid && vid.src) {
+    const o0 = parseFloat(vid.style.opacity) || 1, v0 = vid.volume, t0 = Date.now();
+    const fi = setInterval(() => {
+      const t = Math.min(1, (Date.now() - t0) / 1000 / 1.5);
+      vid.style.opacity = String(o0 * (1 - t));
+      vid.volume = v0 * (1 - t);
+      if (t >= 1) {
+        clearInterval(fi);
+        vid.pause();
+        vid.style.opacity = '0';
+        document.getElementById('now').textContent = '';
+        document.getElementById('timer').textContent = '';
+        // TODO V1.1: tela de agradecimentos/créditos antes de voltar
+        showPage('landing');
+      }
+    }, 30);
+  } else {
+    showPage('landing');
+  }
+}
+
+// ── timer ───────────────────────────────────────────────────────────
+function estimateTotal(sections) {
+  return sections.reduce((sum, sec) => {
+    if (sec.limit !== undefined) return sum + sec.limit;
+    const natural = sec.rawObjects.reduce((s, raw) => {
+      try {
+        const lim = raw.limit !== undefined ? resolve(raw.limit) : undefined;
+        if (lim !== undefined) return s + lim;
+        const evs = expandObject(raw);
+        return s + evs.reduce((d, e) => d + (e.end - e.start) / e.speed, 0);
+      } catch { return s; }
+    }, 0);
+    return sum + natural;
+  }, 0);
+}
+
+function startTimer() {
+  const total = estimateTotal(ps.sections);
+  const tEl = document.getElementById('timer');
+  ps.timerIv = setInterval(() => {
+    if (!ps || !ps.alive) { stopTimer(); return; }
+    const elapsed   = (performance.now() - ps.t0) / 1000;
+    const sec       = ps.currentSection;
+    let secStr      = '';
+    if (sec) {
+      const secElapsed = (performance.now() - ps.sectionT0) / 1000;
+      secStr = fmtTime(secElapsed);
+      if (sec.limit !== undefined) secStr += ' / ' + fmtTime(sec.limit);
+      secStr += '  ·  ';
+    }
+    tEl.textContent = secStr + fmtTime(elapsed) + ' / ' + fmtTime(total);
+  }, 100);
+}
+
+function stopTimer() {
+  if (ps && ps.timerIv) { clearInterval(ps.timerIv); ps.timerIv = null; }
+}
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const r = Math.floor(s % 60);
+  return m + ':' + (r < 10 ? '0' : '') + r;
+}
+
+// ── page navigation ─────────────────────────────────────────────────
+const pages = {
+  landing: document.getElementById('page-landing'),
+  prepare: document.getElementById('page-prepare'),
+  player:  document.getElementById('page-player'),
+};
+
+let currentPage = 'landing';
+
+function showPage(name) {
+  for (const k in pages) pages[k].classList.toggle('active', k === name);
+  currentPage = name;
+}
+
+// Browser history: cada navegação forward (INICIAR / PLAY / abrir SOBRE)
+// faz um pushState. O botão back do navegador dispara popstate, e o
+// handler abaixo faz o reverso: fecha modal SE aberto, senão volta pra
+// landing (parando playback se estiver no player).
+function pushView() {
+  history.pushState({}, '');
+}
+
+function abortPlayback() {
+  if (ps) {
+    ps.alive = false;
+    if (ps.fadeIv) { clearInterval(ps.fadeIv); ps.fadeIv = null; }
+    if (ps.stepTo) { clearTimeout(ps.stepTo); ps.stepTo = null; }
+  }
+  stopTimer();
+  const vid = document.getElementById('player-a');
+  if (vid) {
+    vid.pause();
+    vid.style.opacity = '0';
+    vid.volume = 0;
+  }
+  document.getElementById('now').textContent = '';
+  document.getElementById('timer').textContent = '';
+}
+
+window.addEventListener('popstate', () => {
+  if (modalSobre.classList.contains('show')) {
+    modalSobre.classList.remove('show');
+    return;
+  }
+  if (currentPage === 'player') {
+    abortPlayback();
+    showPage('landing');
+  } else if (currentPage === 'prepare') {
+    showPage('landing');
+  }
+});
+
+// ── modal SOBRE ─────────────────────────────────────────────────────
+const modalSobre = document.getElementById('modal-sobre');
+document.querySelectorAll('[data-action="open-sobre"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    pushView();
+    modalSobre.classList.add('show');
+  });
+});
+// Fechar = history.back() pra manter o histórico do navegador alinhado
+// (popstate handler fecha o modal)
+document.querySelectorAll('[data-action="close-sobre"]').forEach(btn => {
+  btn.addEventListener('click', () => history.back());
+});
+modalSobre.addEventListener('click', e => {
+  if (e.target === modalSobre) history.back();
+});
+
+// ── share handler (Web Share API + fallback) ─────────────────────────
+// O item "Convidar pessoas próximas" aciona o compartilhamento nativo
+// em dispositivos móveis (navigator.share). Fallback: copia o link
+// para a área de transferência ou abre em nova aba.
+const shareInline = document.getElementById('share-inline');
+if (shareInline) {
+  shareInline.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const url = 'https://artes.uff.br/giulianobici/dissimulation5';
+    const title = 'Dissimulation #5';
+    const text = 'Participe do Celular Coral — Dissimulation #5';
+    if (navigator.share) {
+      try { await navigator.share({ title, text, url }); return; } catch (_) { /* cancelled */ }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(url);
+        const hint = document.getElementById('play-hint');
+        if (hint) {
+          const prev = hint.textContent;
+          hint.textContent = 'link copiado';
+          setTimeout(() => { hint.textContent = prev; }, 1500);
+        }
+        return;
+      } catch (_) {}
+    }
+    window.open(url, '_blank', 'noopener');
+  });
+}
+
+// ── share-btn: botão Compartilhar (branco/fundo preto) ───────────────
+const shareBtn = document.getElementById('share-btn');
+if (shareBtn) {
+  shareBtn.addEventListener('click', async () => {
+    const url = 'https://artes.uff.br/giulianobici/dissimulation5';
+    const title = 'Dissimulation #5';
+    const text = 'Participe do Celular Coral — Dissimulation #5';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+      } catch (_) { /* cancelled */ }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        const hint = document.getElementById('play-hint');
+        if (hint) {
+          const prev = hint.textContent;
+          hint.textContent = 'link copiado';
+          setTimeout(() => { hint.textContent = prev; }, 1500);
+        }
+      } catch (_) {
+        window.open(url, '_blank', 'noopener');
+      }
+    }
+  });
+}
+
+// ── título + subtítulo da PREPARE clicáveis = volta pra Landing ─────
+const prepareHome = document.querySelector('.prepare-home');
+prepareHome.addEventListener('click', () => history.back());
+prepareHome.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    history.back();
+  }
+});
+
+// ── INICIAR → vai pra preparar + começa preload ─────────────────────
+document.getElementById('btn-iniciar').addEventListener('click', () => {
+  pushView();
+  showPage('prepare');
+  startPreloading();
+});
+
+// ── preload do video (page 2) ───────────────────────────────────────
+let videoReady = false;
+let videoBlobUrl = null;
+
+function startPreloading() {
+  const playBtn = document.getElementById('btn-play');
+  const hint = document.getElementById('play-hint');
+
+  if (videoReady) {
+    playBtn.disabled = false;
+    hint.textContent = 'pronto';
+    hint.className = 'ready';
+    return;
+  }
+
+  playBtn.disabled = true;
+  hint.textContent = 'carregando vídeo…';
+  hint.className = '';
+
+  const vid = document.getElementById('player-a');
+  fetch(vid.getAttribute('src'))
+    .then(r => {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.blob();
+    })
+    .then(blob => {
+      videoBlobUrl = URL.createObjectURL(blob);
+      vid.src = videoBlobUrl;
+      return new Promise((res) => {
+        let done = false;
+        const handler = () => {
+          if (done) return;
+          done = true;
+          vid.removeEventListener('canplaythrough', handler);
+          vid.removeEventListener('loadeddata', handler);
+          res();
+        };
+        vid.addEventListener('canplaythrough', handler);
+        vid.addEventListener('loadeddata', handler);
+        vid.load();
+        setTimeout(handler, 30000);
+      });
+    })
+    .then(() => {
+      videoReady = true;
+      playBtn.disabled = false;
+      hint.textContent = 'pronto';
+      hint.className = 'ready';
+    })
+    .catch(e => {
+      hint.textContent = 'erro: ' + e.message;
+      hint.className = 'error';
+    });
+}
+
+// ── PLAY → audio unlock + vai pra player + startPartitura ───────────
+document.getElementById('btn-play').addEventListener('click', () => {
+  const vid = document.getElementById('player-a');
+  vid.style.visibility = 'hidden';
+  vid.play().then(() => vid.pause())
+    .then(() => {
+      pushView();
+      vid.style.visibility = 'visible';
+      showPage('player');
+      startPartitura();
+    })
+    .catch(() => {
+      vid.muted = true;
+      document.getElementById('muted-badge').style.display = 'block';
+      vid.style.visibility = 'visible';
+      pushView();
+      showPage('player');
+      startPartitura();
+    });
+});
+
+// AddToAny
+(function() {
+  var a = document.createElement('script');
+  a.src = 'https://static.addtoany.com/menu/page.js';
+  a.async = true;
+  document.head.appendChild(a);
+})();
+</script>
+</body>
+</html>
